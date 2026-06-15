@@ -14,21 +14,18 @@ public class Rectangle extends Shape {
     public double getLength() { return length; }
 
     @Override
-    public double getArea() {
-        return width * length;
-    }
+    public double getArea() { return width * length; }
 
     @Override
-    public double getPerimeter() {
-        return 2 * (width + length);
-    }
+    public double getPerimeter() { return 2 * (width + length); }
 
     @Override
-public String toString() {
-    return "[ shapes.Circle ]\n" +
-           super.toString() + "\n" +
-           "Radius: " + radius + "\n" +
-           String.format("Area         : %.2f", getArea()) + "\n" +
-           String.format("Circumference: %.2f", getPerimeter());
-}
+    public String toString() {
+        return "[ shapes.Rectangle ]\n" +
+               super.toString() + "\n" +
+               "Width : " + width + "\n" +
+               "Length: " + length + "\n" +
+               String.format("Area      : %.2f", getArea()) + "\n" +
+               String.format("Perimeter : %.2f", getPerimeter());
+    }
 }
