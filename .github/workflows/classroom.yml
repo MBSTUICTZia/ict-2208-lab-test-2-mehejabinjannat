@@ -1,65 +1,98 @@
-name: GitHub Classroom Workflow
-on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
 jobs:
-  autograding:
-    name: Autograding
+  run-autograding-tests:
     runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-      - name: Compile
-        run: javac -d . shapes/Shape.java shapes/Rectangle.java shapes/Circle.java shapes/ShapeMain.java
-      - name: Test Rectangle
-        run: |
-          OUTPUT=$(echo "rectangle Red true 5.0 3.0" | java shapes.ShapeMain)
-          EXPECTED="[ shapes.Rectangle ]
-Color : Red
-Filled: Yes
-Width : 5.0
-Length: 3.0
-Area      : 15.00
-Perimeter : 16.00
-Area: 15.00
-Perimeter: 16.00"
-          if [ "$OUTPUT" = "$EXPECTED" ]; then
-            echo "✅ Rectangle test passed"
-          else
-            echo "❌ Rectangle test failed"
-            echo "--- Expected ---"
-            echo "$EXPECTED"
-            echo "--- Got ---"
-            echo "$OUTPUT"
-            exit 1
-          fi
-      - name: Test Circle
-        run: |
-          OUTPUT=$(echo "circle Blue false 7.0" | java shapes.ShapeMain)
-          EXPECTED="[ Circle ]
-Color : Blue
-Filled: No
-Radius: 7.0
-Area         : 153.94
-Circumference: 43.98
-Area: 153.94
-Perimeter: 43.98"
-          if [ "$OUTPUT" = "$EXPECTED" ]; then
-            echo "✅ Circle test passed"
-          else
-            echo "❌ Circle test failed"
-            echo "--- Expected ---"
-            echo "$EXPECTED"
-            echo "--- Got ---"
-            echo "$OUTPUT"
-            exit 1
-          fi
-      - name: Run Autograding
-        uses: education/autograding@v1
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Mix Shapes Test (5)
+      id: mix-shapes-test-5
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Mix Shapes Test (5)
+        setup-command: javac shapes/Shape.java shapes/Rectangle.java shapes/Circle.java
+          shapes/ShapeMain.java
+        command: java shapes.ShapeMain
+        input: |-
+          2
+          RECTANGLE
+          Red true
+          4.0 5.0
+          CIRCLE
+          Blue false
+          3.0
+        expected-output: |-
+          [ Rectangle ]
+          Color : Red
+          Filled: Yes
+          Width : 4.0
+          Length: 5.0
+          Area      : 20.00
+          Perimeter : 18.00
+
+          [ Circle ]
+          Color : Blue
+          Filled: No
+          Radius: 3.0
+          Area         : 28.27
+          Circumference: 18.85
+
+          --- Downcast Check ---
+          Rectangle width=4.0 length=5.0
+          Circle radius=3.0
+        comparison-method: exact
+        timeout: 10
+        max-score: 5
+    - name: Dynamic Math Test (5)
+      id: dynamic-math-test-5
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Dynamic Math Test (5)
+        setup-command: javac shapes/Shape.java shapes/Rectangle.java shapes/Circle.java
+          shapes/ShapeMain.java
+        command: java shapes.ShapeMain
+        input: |-
+          2
+          CIRCLE
+          Green true
+          1.5
+          RECTANGLE
+          Yellow false
+          2.5 3.5
+        expected-output: |-
+          [ Circle ]
+          Color : Green
+          Filled: Yes
+          Radius: 1.5
+          Area         : 7.07
+          Circumference: 9.42
+
+          [ Rectangle ]
+          Color : Yellow
+          Filled: No
+          Width : 2.5
+          Length: 3.5
+          Area      : 8.75
+          Perimeter : 12.00
+
+          --- Downcast Check ---
+          Circle radius=1.5
+          Rectangle width=2.5 length=3.5
+        comparison-method: exact
+        timeout: 10
+        max-score: 5
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        MIX-SHAPES-TEST-5_RESULTS: "${{steps.mix-shapes-test-5.outputs.result}}"
+        DYNAMIC-MATH-TEST-5_RESULTS: "${{steps.dynamic-math-test-5.outputs.result}}"
+      with:
+        runners: mix-shapes-test-5,dynamic-math-test-5
