@@ -1,45 +1,35 @@
 name: GitHub Classroom Workflow
-
 on:
   push:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
-
 jobs:
   autograding:
     name: Autograding
     runs-on: ubuntu-latest
-
     steps:
-      # 1. Checkout student code
       - name: Checkout code
         uses: actions/checkout@v4
-
-      # 2. Set up Java
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-
-      # 3. Compile all shape classes
       - name: Compile
         run: javac -d . shapes/Shape.java shapes/Rectangle.java shapes/Circle.java shapes/ShapeMain.java
-
-      # 4. Test 1 — Rectangle
       - name: Test Rectangle
         run: |
           OUTPUT=$(echo "rectangle Red true 5.0 3.0" | java shapes.ShapeMain)
           EXPECTED="[ shapes.Rectangle ]
-          Color : Red
-          Filled: Yes
-          Width : 5.0
-          Length: 3.0
-          Area      : 15.00
-          Perimeter : 16.00
-          Area: 15.00
-          Perimeter: 16.00"
+Color : Red
+Filled: Yes
+Width : 5.0
+Length: 3.0
+Area      : 15.00
+Perimeter : 16.00
+Area: 15.00
+Perimeter: 16.00"
           if [ "$OUTPUT" = "$EXPECTED" ]; then
             echo "✅ Rectangle test passed"
           else
@@ -50,19 +40,17 @@ jobs:
             echo "$OUTPUT"
             exit 1
           fi
-
-      # 5. Test 2 — Circle
       - name: Test Circle
         run: |
           OUTPUT=$(echo "circle Blue false 7.0" | java shapes.ShapeMain)
           EXPECTED="[ Circle ]
-          Color : Blue
-          Filled: No
-          Radius: 7.0
-          Area         : 153.94
-          Circumference: 43.98
-          Area: 153.94
-          Perimeter: 43.98"
+Color : Blue
+Filled: No
+Radius: 7.0
+Area         : 153.94
+Circumference: 43.98
+Area: 153.94
+Perimeter: 43.98"
           if [ "$OUTPUT" = "$EXPECTED" ]; then
             echo "✅ Circle test passed"
           else
@@ -73,7 +61,5 @@ jobs:
             echo "$OUTPUT"
             exit 1
           fi
-
-      # 6. Official GitHub Classroom Autograder (shows score on dashboard)
       - name: Run Autograding
         uses: education/autograding@v1
