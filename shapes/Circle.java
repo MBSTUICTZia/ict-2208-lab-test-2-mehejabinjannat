@@ -17,13 +17,12 @@ public class Circle extends Shape {
     public double getPerimeter() { return 2 * Math.PI * radius; }
 
     @Override
-    public String toString() {
-        return "[ Circle ]\n" +
-               super.toString() + "\n" +
-               "Radius: " + radius + "\n" +
-               String.format("Area         : %.2f", getArea()) + "\n" +
-               String.format("Circumference: %.2f", getPerimeter()) + "\n" +
-               String.format("Area: %.2f", getArea()) + "\n" +
-               String.format("Perimeter: %.2f", getPerimeter());
-    }
+public String toString() {
+    return "[ Circle ]\n" +
+           "Color : " + getColor() + "\n" +
+           "Filled: " + (isFilled() ? "Yes" : "No") + "\n" +
+           "Radius: " + radius + "\n" +
+           String.format("Area         : %.2f", getArea()) + "\n" +
+           String.format("Circumference: %.2f", getPerimeter());
+}
 }
