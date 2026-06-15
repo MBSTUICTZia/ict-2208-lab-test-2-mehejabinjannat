@@ -20,14 +20,13 @@ public class Rectangle extends Shape {
     public double getPerimeter() { return 2 * (width + length); }
 
     @Override
-    public String toString() {
-        return "[ shapes.Rectangle ]\n" +
-               super.toString() + "\n" +
-               "Width : " + width + "\n" +
-               "Length: " + length + "\n" +
-               String.format("Area      : %.2f", getArea()) + "\n" +
-               String.format("Perimeter : %.2f", getPerimeter()) + "\n" +
-               String.format("Area: %.2f", getArea()) + "\n" +
-               String.format("Perimeter: %.2f", getPerimeter());
-    }
+public String toString() {
+    return "[ Rectangle ]\n" +
+           "Color : " + getColor() + "\n" +
+           "Filled: " + (isFilled() ? "Yes" : "No") + "\n" +
+           "Width : " + width + "\n" +
+           "Length: " + length + "\n" +
+           String.format("Area      : %.2f", getArea()) + "\n" +
+           String.format("Perimeter : %.2f", getPerimeter());
+}
 }
